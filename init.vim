@@ -129,135 +129,119 @@
 " puzzle:           擄
 " ====================================================================================================
 
-" === === === === === === === === === ===
-" === Plug Install
-" === === === === === === === === === ===
+
+
+
+" === Plug Install ===
 call plug#begin('~/.vim/plugged')
 
-Plug 'scrooloose/nerdtree'
+" File navigation
+Plug 'ibhagwan/fzf-lua'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'kevinhwang91/rnvimr'
+Plug 'airblade/vim-rooter'
+Plug 'pechorin/any-jump.vim'
+
+" Plug 'scrooloose/nerdtree'
 
 
 Plug 'tpope/vim-surround'
 Plug 'gcmt/wildfire.vim'
 
 
-" === vim-airline ===
 Plug 'vim-airline/vim-airline'
 
 
-Plug 'junegunn/goyo.vim'
+" Plug 'junegunn/goyo.vim'
 
 
 " === color scheme ===
 Plug 'morhetz/gruvbox'
 Plug 'tomasr/molokai'
-Plug 'connorholyday/vim-snazzy'
+" Plug 'connorholyday/vim-snazzy'
+" Plug 'altercation/solarized'
+" Plug 'flazz/vim-colorschemes'
 
 
-" Plug 'valloric/youcompleteme'
-
-
-" === markdown ===
-Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
-Plug 'iamcco/markdown-preview.nvim'
-
-
-" === NCM2 ===
-" Plug 'ncm2/ncm2'
-" Plug 'roxma/nvim-yarp'
-" Plug 'ncm2/ncm2-bufword'
-" Plug 'ncm2/ncm2-path'
-" Plug 'ncm2/ncm2-pyclang' " c/c++
-" Plug 'ncm2/ncm2-jedi' " python
-
-
-" === coc ===
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-
+" === code complete ===
 Plug 'ervandew/supertab'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'davidhalter/jedi-vim'
 
 
 " === vimtex ===
 Plug 'lervag/vimtex'
-
 Plug 'KeitaNakamura/tex-conceal.vim', {'for': 'tex'}
 Plug 'wjakob/wjakob.vim'
 
 
+" === matlab ===
+" function! DoRemote(arg)
+"   UpdateRemotePlugins
+" endfunction
+" Plug 'daeyun/vim-matlab', { 'do': function('DoRemote') }
+" Plug 'lazywei/vim-matlab'
+
+
 call plug#end()
 
-" ====================================================================================================
-
-" === === === === === === === === === ===
-" === noremap
-" === === === === === === === === === ===
-" === noremap ===
-
-noremap n j
-noremap N 5j
-noremap e k
-noremap E 5k
-noremap i l
-noremap I 7l
-noremap H 7h
-noremap u i
-noremap U I
-noremap l u
-noremap L U
-noremap k n
-noremap K N
-noremap j e
-noremap J E
 
 
-" === === === === === === === === === ===
-" === imap
-" === === === === === === === === === ===
-" === imap ===
-" imap ne <Esc>
-
-
-" === markdown imap configuration ===
-autocmd FileType markdown imap ,mm $$<Enter>$$<Enter><++><Esc>kO
-autocmd FileType markdown imap ,mb **** <++><Esc>F*hi
-autocmd FileType markdown imap ,mi  $$ <++><Esc>F$i
-autocmd FileType markdown imap ,mf \frac{}{<++>} <++><Esc>F{hi
-autocmd FileType markdown imap ,mc ```<CR><++><CR>```<Esc>eeA
-
-
-" === === === === === === === === === ===
 " === map
-" === === === === === === === === === ===
-map <Space> <LEADER>
+" map <Space> <LEADER>
+let mapleader=" "
 
 map ; :
 map s <nop>
-map S :w<CR>
-map Q :q<CR>
+" map S :w<CR>
+" map Q :q<CR>
 
-" screen scroll
-map <LEADER>t 12ezz12n
-map <LEADER>s 12nzz12e
+" === screen scroll ===
+map <LEADER>t 16ezz16n
+map <LEADER>s 16nzz16e
 
-map R :source $MYVIMRC<CR>
-map T :NERDTree<CR>
 map <LEADER><LEADER> <Esc>/<++><CR>:nohlsearch<CR>c4i
 map ,q :call CompileRunGcc()<CR>
+map ,m :call RunMakeScript()<CR>
 
 map si :set splitright<CR>:vsplit<CR>
 map sh :set nosplitright<CR>:vsplit<CR>
 map se :set nosplitbelow<CR>:split<CR>
 map sn :set splitbelow<CR>:split<CR>
 
-map tx :r !figlet 
+map tx :r !figlet
 
 map <LEADER>i <C-w>l
 map <LEADER>h <C-w>h
 map <LEADER>n <C-w>j
 map <LEADER>e <C-w>k
 
+
+" === noremap ===
+noremap <silent> H 0
+noremap <silent> n j
+noremap <silent> N 5j
+noremap <silent> e k
+noremap <silent> E 5k
+noremap <silent> i l
+noremap <silent> I $
+noremap <silent> j e
+noremap <silent> J E
+noremap <silent> l u
+noremap <silent> L U
+noremap <silent> u i
+noremap <silent> U I
+noremap <silent> k n
+noremap <silent> K N
+
+
+" === nmap
+nmap <LEADER>v "+p
+nmap <LEADER>c "+y
+
+
+" === compile
 func! CompileRunGcc()
     exec "w"
     if &filetype == 'c'
@@ -267,24 +251,27 @@ func! CompileRunGcc()
         exec '!g++ % -o %<'
         exec '!time ./%<'
     elseif &filetype == 'python'
-        exec '!python %'
+        exec '!python3 %'
     elseif &filetype == 'sh'
         :!time bash %
     elseif &filetype == 'html'
-        exec 'w'
         exec '!firefox % &'
+    elseif &filetype == 'matlab'
+        exec '!octave %'
     endif
 endfunc<Paste>
 
-" ====================================================================================================
+func! RunMakeScript()
+    exec "w"
+    exec '!sh ./make.sh'
+endfunc<Paste>
 
-" ===  ===    ===   ===
-" === Basic setting ===
-" ===  ===    ===   ===
 
-" let mapleader=" "
+" basic setting
 
-" set helplang=cn
+" === syntax ===
+syntax enable " syntax highlight
+syntax on
 
 set number
 set relativenumber
@@ -292,13 +279,15 @@ set ruler
 set cursorline
 set wrap
 set wildmenu
-" set foldenable
 set nofoldenable
 set showcmd
 set autoindent
 set cindent
 set list listchars=extends:❯,precedes:❮,tab:▸\ ,trail:▫
 set scrolloff=3
+
+" font
+" set guifontwide=Noto\ Sans\ CJK\ SC\ Medium
 
 " for locale utf-8
 set fileencodings=utf8,cp936,gb18030,big5
@@ -310,7 +299,6 @@ let &t_SR = "\<Esc>]50;CursorShape=2\x7"
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-
 " === search ===
 set hlsearch
 exec "nohlsearch"
@@ -321,31 +309,12 @@ nmap = kzz
 nmap - Kzz
 nmap <LEADER><Enter> :nohlsearch<CR>
 
-
-" upper, lower
+" === upper, lower ===
 nmap <LEADER>U gui
 nmap <LEADER>u gUi
 
-
-" === cursor moving ===
-" 6 7 8 9
-" a r s t
-" nmap <LEADER>na 6n
-" nmap <LEADER>nr 7n
-" nmap <LEADER>ns 8n
-" nmap <LEADER>nt 9n
-" nmap <LEADER>nt 10n
-" 
-" nmap <LEADER>ea 6e
-" nmap <LEADER>er 7e
-" nmap <LEADER>es 8e
-" nmap <LEADER>et 9e
-" nmap <LEADER>et 10e
-
-
 " === reset line ===
 nmap <LEADER>r ddO
-
 
 " === using mouse ===
 " set mouse=a
@@ -359,10 +328,6 @@ set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 
 
-" === python ===
-" let g:python3_host_prog=d:/install/python/install/
-
-
 " === tab ===
 set tabstop=4
 set softtabstop=4
@@ -374,16 +339,12 @@ autocmd FileType html setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 autocmd FileType css setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 autocmd FileType json setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
-autocmd FileType python setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
+" autocmd FileType python setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
+autocmd FileType matlab setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 
 
 " autocmd FileType
 autocmd FileType json syntax match Comment +\/\/.\+$+
-
-
-" === syntax ===
-syntax enable " syntax highlight
-syntax on
 
 
 " === color scheme ===
@@ -393,6 +354,8 @@ set termguicolors " 24 bits color
 colorscheme gruvbox
 " colorscheme snazzy
 " colorscheme molokai
+
+
 " let g:molokai_oriinal = 1
 " let g:rehash256 = 1
 
@@ -401,12 +364,11 @@ colorscheme gruvbox
 
 " === alpha background ===
 hi Normal ctermfg=256 ctermbg=none
-set notermguicolors
+" set notermguicolors
 " set 24 bits color, to disable alpha
 nmap <LEADER>a :set notermguicolors<CR>
 " down 24 bits color, to enable alpha
 nmap <LEADER>A :set termguicolors<CR>
-
 
 
 " === system chipboard ===
@@ -414,48 +376,18 @@ vmap <LEADER>c "+yy
 nmap <LEADER>c "+yy
 nmap <LEADER>v "+p
 
-" ====================================================================================================
 
-" === === === === === === === === === ===
-" === vim-airline configuration
-" === === === === === === === === === ===
-" let g:airline#extensions#tabline#enabled = 1
+" === my edit complete ===
 
+" === latex ===
+" nmap <LEADER>b ggU%! Tex program = xelatex<CR>\documentclass{article}<CR>\usepackage[UTF8]{ctex}<CR>\usepackage{xeCJK}<CR>\setCJKmainfont{文鼎ＰＬ简报宋:style=Regular}<CR>%\setCJKmainfont{文鼎ＰＬ简中楷:style=Regular}<CR>\title{<++>}<CR>\author{<++>}<CR>\date{ }<CR>\begin{document}<CR>\maketitle<CR><CR><++><CR><CR>\end{document}<CR><Esc>gg
+autocmd FileType tex nmap <LEADER>b ggU%! Tex program = xelatex<CR>\documentclass[12pt, a4paper]{article}<CR>\usepackage[UTF8]{ctex}<CR>\usepackage{xeCJK}<CR>\usepackage{graphicx}<CR>\usepackage{geometry}<CR>\geometry{a4paper}<CR>\geometry{left=2cm,right=2cm,top=3cm,bottom=3cm,vcentering,hcentering}<CR>\usepackage{fancyhdr}<CR>\pagestyle{fancy}<CR>\fancyhf{}<CR>\renewcommand\headrulewidth{0pt}<CR>\rhead{\thepage}<CR>\title{<++>}<CR>\author{<++>}<CR>\date{<++>}<CR>\begin{document}<CR><CR>\maketitle<CR>\thispagestyle{fancy}<CR><CR><CR><CR>\end{document}<CR><Esc>gg
 
-" === === === === === === === === === ===
-" === NERDTree-git-plugin configuration
-" === === === === === === === === === ===
-"let g:NERDTreeIndicatorMapCustom = {
-"    \ "Modified"  : "✹",
-"    \ "Staged"    : "✚",
-"    \ "Untracked" : "✭",
-"    \ "Renamed"   : "➜",
-"    \ "Unmerged"  : "═",
-"    \ "Deleted"   : "✖",
-"    \ "Dirty"     : "✗",
-"    \ "Clean"     : "✔︎",
-"    \ 'Ignored'   : '☒',
-"    \ "Unknown"   : "?"
-"    \ }
-"
-"let g:NERDTreeShowIgnoredStatus = 1
+" === c++ for leetcode ===
+autocmd FileType cpp nmap <LEADER>b ggO#include <<++>><CR><CR>using namespace std;<CR><CR>class Solution {<CR>public:<CR>    <++> {<CR><CR>    }<CR>};<CR><Esc>ggV/};<CR>=/public<CR>V/}<CR><:nohlsearch<CR>gg0
 
 
-" === === === === === === === === === ===
-" === Markdown Preview configuration
-" === === === === === === === === === ===
-nmap <C-m> <Plug>MarkdownPreview
-nmap <C-s> <Plug>MarkdownPreviewStop
-nmap <C-p> <Plug>MarkdownPreviewToggle
-
-
-
-" === === === === === === === === === ===
-" === NCM2 pychang
-" === === === === === === === === === ===
-" leg g:ncm2_pyclang#library_path = 'D:/install/VSCode/Clang/LLVM/libg
-
-
+" ================ plug configration
 
 " === === === === === === === === === ===
 " === Vimtex
@@ -473,6 +405,7 @@ let g:vimtex_compiler_latexrun_engines ={'_':'xelatex'}
 set conceallevel=2
 let g:tex_conceal='abdmg'
 
+autocmd FileType tex setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 
 
 " === === === === === === === === === ===
@@ -492,3 +425,59 @@ endfunction
 
 " Use mdpv(markdown) to open markdown-preview-enhanced
 call SetupCommandAbbrs('mdpv', 'CocCommand markdown-preview-enhanced.openPreview')
+
+" === coc extensions
+" coc-clangd
+" coc-cmake
+" coc-git
+" coc-highlight
+" coc-jedi
+" coc-json
+" coc-markdown-preview-enhanced
+" coc-python
+" coc-sh
+" coc-snippets
+" coc-vimlsp
+" coc-vimtex
+" coc-webview
+" coc-yaml
+
+
+" === === === === === === === === === ===
+" === matlab
+" === === === === === === === === === ===
+
+" let g:matlab_server_launcher = 'vim'  "launch the server in a Neovim terminal buffer
+" let g:matlab_auto_mappings = 1 "automatic mappings enabled
+" let g:matlab_server_split = 'vertical'   "launch the server in a vertical split
+
+
+
+" === === === === === === === === === ===
+" === gruvbox
+" === === === === === === === === === ===
+
+" let g:gruvbox_contrast='hard'
+
+"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (empty($TMUX))
+  if (has("nvim"))
+    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  endif
+  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+  if (has("termguicolors"))
+    set termguicolors
+  endif
+endif
+
+
+" === === === === === === === === === ===
+" === nerd tree
+" === === === === === === === === === ===
+nnoremap <LEADER>n :NERDTreeFocus<CR>
+" nnoremap <C-n> :NERDTree<CR>
